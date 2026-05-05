@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 
-// In production set DATABASE_URL to your Supabase connection string.
-// Locally, falls back to a local postgres URL or can be overridden.
+// In production set DATABASE_URL to your Nhost PostgreSQL connection string.
+// Find it in Nhost dashboard → Settings → Database → Connection string.
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
