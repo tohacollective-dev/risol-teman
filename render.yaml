@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: risol-teman
+    env: node
+    region: singapore
+    plan: free
+    rootDir: .
+    buildCommand: cd backend && npm install --production
+    startCommand: node backend/server.js
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: NODE_ENV
+        value: production

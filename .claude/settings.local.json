@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 *)",
+      "Bash(node --experimental-sqlite server.js)",
+      "Bash(curl -s http://localhost:3001/api/health)",
+      "Bash(npx --yes @babel/parser --version)",
+      "Bash(node -e ' *)",
+      "Read(//private/tmp/babelcheck/**)",
+      "Bash(npm install *)",
+      "Bash(fly orgs *)",
+      "Bash(fly platform *)"
+    ]
+  }
+}

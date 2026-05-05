@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Risol Teman — POS System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #3E3DE1;
+      --primary-light: #EEEEFF;
+      --primary-dark: #2D2CB8;
+      --accent: #E3F851;
+      --success: #22C55E;
+      --success-light: #DCFCE7;
+      --warning: #F59E0B;
+      --warning-light: #FEF3C7;
+      --danger: #EF4444;
+      --danger-light: #FEE2E2;
+      --bg: #F9FAFB;
+      --card: #FFFFFF;
+      --border: #E5E7EB;
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+      --sidebar-w: 220px;
+      --font-display: 'Plus Jakarta Sans', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    }
+    html, body, #root { height: 100%; font-family: var(--font-body); background: var(--bg); color: var(--text-primary); }
+    button { cursor: pointer; font-family: var(--font-body); }
+    input, select, textarea { font-family: var(--font-body); }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 99px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Ganti URL di bawah dengan URL backend Fly.io kamu setelah deploy -->
+  <!-- Contoh: window.API_BASE = 'https://risol-teman.fly.dev'; -->
+  <!-- Untuk lokal, biarkan kosong atau hapus baris ini -->
+  <script>
+    window.API_BASE = '';
+  </script>
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Tweaks panel (must load before app.jsx) -->
+  <script type="text/babel" data-presets="react">
+    /* tweaks-panel stub — exposes useTweaks, TweaksPanel, TweakSection, TweakSlider, TweakToggle, TweakColor */
+    function useTweaks(defaults) {
+      const [values, setValues] = React.useState(defaults);
+      const setTweak = React.useCallback((keyOrEdits, val) => {
+        const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null ? keyOrEdits : { [keyOrEdits]: val };
+        setValues(prev => ({ ...prev, ...edits }));
+      }, []);
+      return [values, setTweak];
+    }
+    function TweaksPanel({ title = 'Tweaks', children, values = {}, set = () => {} }) {
+      const [open, setOpen] = React.useState(false);
+      React.useEffect(() => {
+        const onMsg = e => { if (e?.data?.type === '__activate_edit_mode') setOpen(true); else if (e?.data?.type === '__deactivate_edit_mode') setOpen(false); };
+        window.addEventListener('message', onMsg);
+        window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+        return () => window.removeEventListener('message', onMsg);
+      }, []);
+      if (!open) return null;
+      return (
+        <TweakCtx.Provider value={{ values, set }}>
+          <div style={{ position:'fixed', right:16, bottom:16, zIndex:9999, background:'white', borderRadius:12, padding:'16px', boxShadow:'0 8px 32px rgba(0,0,0,0.15)', width:260, border:'1px solid #E5E7EB' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:12, fontWeight:700 }}>
+              <span>{title}</span>
+              <button onClick={() => setOpen(false)} style={{ background:'none', border:'none', cursor:'pointer', fontSize:16 }}>✕</button>
+            </div>
+            {children}
+          </div>
+        </TweakCtx.Provider>
+      );
+    }
+    function TweakSection({ title, label, children }) { return <><div style={{ fontSize:11, fontWeight:600, textTransform:'uppercase', color:'#9CA3AF', letterSpacing:'0.06em', marginBottom:8, marginTop:8 }}>{title||label}</div>{children}</>; }
+    function TweakSlider({ label, tweakKey, min=0, max=100, step=1 }) {
+      const ctx = React.useContext(TweakCtx);
+      return <div style={{ marginBottom:10 }}><label style={{ fontSize:12, color:'#6B7280' }}>{label}</label><input type="range" min={min} max={max} step={step} value={ctx.values[tweakKey]??min} onChange={e => ctx.set(tweakKey, Number(e.target.value))} style={{ width:'100%' }} /></div>;
+    }
+    function TweakToggle({ label, tweakKey }) {
+      const ctx = React.useContext(TweakCtx);
+      return <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}><span style={{ fontSize:12, color:'#6B7280' }}>{label}</span><input type="checkbox" checked={!!ctx.values[tweakKey]} onChange={e => ctx.set(tweakKey, e.target.checked)} /></div>;
+    }
+    function TweakColor({ label, tweakKey }) {
+      const ctx = React.useContext(TweakCtx);
+      return <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}><span style={{ fontSize:12, color:'#6B7280' }}>{label}</span><input type="color" value={ctx.values[tweakKey]??'#000000'} onChange={e => ctx.set(tweakKey, e.target.value)} style={{ width:40, height:24, border:'none', cursor:'pointer' }} /></div>;
+    }
+    const TweakCtx = React.createContext({ values:{}, set:()=>{} });
+    Object.assign(window, { useTweaks, TweaksPanel, TweakSection, TweakSlider, TweakToggle, TweakColor, TweakCtx });
+  </script>
+
+  <script type="text/babel" data-presets="react" src="app.jsx"></script>
+</body>
+</html>

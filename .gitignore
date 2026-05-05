@@ -1,0 +1,19 @@
+# Dependencies
+backend/node_modules/
+
+# SQLite database (jangan di-commit, data user)
+backend/*.db
+backend/*.db-wal
+backend/*.db-shm
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local

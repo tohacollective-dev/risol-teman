@@ -1,0 +1,23 @@
+# fly.toml — Risol Teman POS
+app = 'risol-teman'
+primary_region = 'sin'
+
+[build]
+
+[env]
+  PORT = '3001'
+  FRONTEND_URL = 'https://nextapp-umber-kappa.vercel.app'
+  # DATABASE_URL is set as a secret: flyctl secrets set DATABASE_URL="..."
+
+[http_service]
+  internal_port = 3001
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '256mb'
+  cpu_kind = 'shared'
+  cpus = 1
