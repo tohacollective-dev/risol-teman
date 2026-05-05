@@ -1,5 +1,7 @@
 # Dependencies
 backend/node_modules/
+nextapp/node_modules/
+nextapp/.next/
 
 # SQLite database (jangan di-commit, data user)
 backend/*.db
