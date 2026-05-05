@@ -9,7 +9,14 @@
       "Read(//private/tmp/babelcheck/**)",
       "Bash(npm install *)",
       "Bash(fly orgs *)",
-      "Bash(fly platform *)"
+      "Bash(fly platform *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(brew install *)",
+      "Bash(gh --version)",
+      "Bash(git remote *)",
+      "Bash(gh repo *)",
+      "Bash(git push *)"
     ]
   }
 }
